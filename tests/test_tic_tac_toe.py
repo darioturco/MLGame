@@ -85,4 +85,46 @@ class GeneralTests(Tests):
         ttt.make_move((2, 1))
         self.assert_true(np.array_equal(ttt.board, [['O', '', ''], ['', 'X', 'O'], ['', '', '']]), f"Error: {ttt.board}", "Succeful Test 15")
 
+    def test_before_multiple_moves_board_is_correct(self):
+        ttt = TicTacToe()
+        ttt.make_move((0, 0))
+        ttt.make_move((1, 0))
+        ttt.make_move((2, 0))
+        ttt.make_move((0, 1))
+        ttt.make_move((1, 2))
+        ttt.make_move((1, 1))
+        self.assert_true(np.array_equal(ttt.board, [['O', 'X', 'O'], ['X', 'X', ''], ['', 'O', '']]), f"Error: {ttt.board}", "Succeful Test 16")
+
+    def test_O_can_win(self):
+        ttt = TicTacToe()
+        ttt.make_move((0, 0))
+        ttt.make_move((1, 0))
+        ttt.make_move((1, 1))
+        ttt.make_move((0, 1))
+        ttt.make_move((2, 2))
+        self.assert_true(ttt.winner == 'O', f"Error: {ttt.board}", "Succeful Test 17")
+
+    def test_X_can_win(self):
+        ttt = TicTacToe()
+        ttt.make_move((1, 0))
+        ttt.make_move((0, 0))
+        ttt.make_move((0, 1))
+        ttt.make_move((1, 1))
+        ttt.make_move((2, 1))
+        ttt.make_move((2, 2))
+        self.assert_true(ttt.winner == 'X', f"Error: {ttt.board}", "Succeful Test 18")
+
+    def test_can_draw(self):
+        ttt = TicTacToe()
+        ttt.make_move((0, 0))
+        ttt.make_move((1, 0))
+        ttt.make_move((2, 0))
+        ttt.make_move((0, 1))
+        ttt.make_move((1, 2))
+        ttt.make_move((1, 1))
+        ttt.make_move((2, 1))
+        ttt.make_move((2, 2))
+        ttt.make_move((0, 2))
+        self.assert_true(ttt.winner == 'Draw', f"Error: {ttt.board}", "Succeful Test 19")
+
 GeneralTests().run_all_tests()

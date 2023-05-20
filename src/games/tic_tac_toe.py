@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 from icecream import ic
 from src.games.game import Game
@@ -20,6 +21,17 @@ class TicTacToe(Game):
         self._is_finish = False
         self._turn = 'O'
         self._winner = None
+
+    @classmethod
+    def game_with_board_and_turn(cls, board, turn):
+        new_game = cls()
+        new_game._board = board
+        new_game._turn = turn
+
+
+        new_game.check_if_ended()
+
+        return new_game
 
     def print_board(self):
         for row in self._board:
@@ -58,8 +70,7 @@ class TicTacToe(Game):
             return 'X'
         return 'O'
 
-    def make_move(self, move):
-        x, y = move
+    def is_a_posible_move(self, x, y):
         if self._is_finish:
             raise Exception("Error. Can't play a finished game.")
 
@@ -69,10 +80,24 @@ class TicTacToe(Game):
         if self._board[y][x] != self._empty:
             raise Exception("Error. Can't play where someone already played.")
 
+    def make_move(self, move):
+        x, y = move
+        self.is_a_posible_move(x, y)
+
         self._board[y][x] = self._turn
         self._turn = self.next_player()
 
         return self.check_if_ended()
+
+    # Is the same function of make_move but returning a copy
+    def move(self, move):
+        x, y = move
+        self.is_a_posible_move(x, y)
+
+        new_board = copy.deepcopy(self._board)
+        new_board[y][x] = self._turn
+
+        return TicTacToe.game_with_board_and_turn(new_board, self.next_player())
 
     def is_board_full(self):
         for r in self._board:
@@ -99,7 +124,7 @@ class TicTacToe(Game):
             self._is_finish = True
             if O_won:
                 self._winner = 'O'
-            elif X_win:
+            elif X_won:
                 self._winner = 'X'
             else:
                 self._winner = 'Draw'
@@ -135,10 +160,25 @@ class TicTacToe(Game):
         return True
 
     def all_posibles_moves(self):
-        res = Set()
+        res = set()
         for i in range(3):
             for j in range(3):
                 if self._board[i][j] == '':
-                    res.add((i, j))
+                    res.add((j, i))
 
         return res
+
+    def play(self, player1, player2):
+
+        while not self._is_finish:
+            if self._turn == 'O':
+                move = player1(self)
+            else:
+                move = player2(self)
+
+            self.make_move(move)
+
+        print("\n\n----------------------")
+        self.print_board()
+        print("----------------------\n")
+        print(f"The winner is: {self._winner}")
