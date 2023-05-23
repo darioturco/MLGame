@@ -28,7 +28,6 @@ class TicTacToe(Game):
         new_game._board = board
         new_game._turn = turn
 
-
         new_game.check_if_ended()
 
         return new_game
@@ -167,6 +166,12 @@ class TicTacToe(Game):
                     res.add((j, i))
 
         return res
+
+    def new_game(self):
+        return self.__class__()
+
+    def get_state(self):
+        return tuple([elem for row in self._board for elem in row])
 
     def play(self, player1, player2):
 
