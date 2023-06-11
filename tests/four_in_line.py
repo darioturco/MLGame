@@ -122,5 +122,4 @@ class GeneralTests(Tests):
         fil = FourInLine(6, 6)
         self.assert_false(fil.check_if_ended(), f"Error", "Succeful Test 14")
 
-
 GeneralTests().run_all_tests()

@@ -16,10 +16,10 @@ class Minmax(object):
 
     def minmax(self, game, maximazing, depth=0):
 
-        if(depth == 0):
+        #if(depth == 0):
             #print("Max depth reached")
             ### Lock what has to be done when the depth limit is reached
-            return 0
+        #    return 0
 
         if game.is_finish is True:
             return self.score_function(game)

@@ -73,24 +73,19 @@ def four_in_line_test():
 
 
     fil.make_move((0, ))
-    fil.make_move((1, ))
-    fil.make_move((1, ))
-    fil.make_move((2, ))
-    fil.make_move((2, ))
-    fil.make_move((3, ))
+    fil.make_move((0, ))
+    #fil.make_move((1, ))
+    #fil.make_move((2, ))
+    #fil.make_move((2, ))
+    #fil.make_move((3, ))
     #fil.make_move((0, ))
-    #fil.make_move((3, ))
-    #fil.make_move((2, ))
-    #fil.make_move((3, ))
-    #fil.make_move((1, ))
-    #fil.make_move((1, ))
-    #fil.make_move((2, ))
 
 
-    fil.print_board()
+
+    #fil.print_board()
     #print(fil.turn)
 
-    print(algorithm.get_better_move())
+    #print(algorithm.get_better_move())
 
     fil.play(player_human, player_ia)
 
