@@ -3,28 +3,23 @@ import numpy as np
 from icecream import ic
 from src.games.game import Game
 
+class FourInLine(Game):
+    def __init__(self, height, width):
 
-
-
-
-class TicTacToe(Game):
-
-    def __init__(self):
-        # Execute the upper class __init__
-        self._name = "Tic Tac Toe"
+        self._name = "Four In Line"
         self._player1 = 'O'
         self._player2 = 'X'
-        self._empty = ''
-        self._board = [[self._empty, self._empty, self._empty],
-                        [self._empty, self._empty, self._empty],
-                        [self._empty, self._empty, self._empty]]
+        self._empty = ' '
+        self._height = height
+        self._width = width
+        self._board = [[self._empty for _ in range(width)] for _ in range(height)]
         self._is_finish = False
-        self._turn = 'O'
+        self._turn = self._player1
         self._winner = None
 
     @classmethod
-    def game_with_board_and_turn(cls, board, turn):
-        new_game = cls()
+    def game_with_board_and_turn(cls, height, width, board, turn):
+        new_game = cls(height, width)
         new_game._board = board
         new_game._turn = turn
 
@@ -61,27 +56,37 @@ class TicTacToe(Game):
     def winner(self):
         return self._winner
 
-    def in_range(self, val):
-        return val >= 0 and val < 3
+    def in_range_width(self, val):
+        return val >= 0 and val < self._width
+
+    def in_range_height(self, val):
+        return val >= 0 and val < self._height
 
     def next_player(self):
         if self._turn == 'O':
             return 'X'
         return 'O'
 
-    def check_posible_move(self, x, y):
+    def check_posible_move(self, x):
         if self._is_finish:
             raise Exception("Error. Can't play a finished game.")
-
-        if not (self.in_range(x) and self.in_range(y)):
+        if not (self.in_range_width(x)):
             raise Exception("Error. Invalid coodinated to play.")
+        if self._board[0][x] != self._empty:
+            raise Exception("Error. Can't play in a full column.")
+        return True
 
-        if self._board[y][x] != self._empty:
-            raise Exception("Error. Can't play where someone already played.")
+    def get_drop_row(self, x):
+        for i in range(self._height):
+            if self._board[self._height - 1 - i][x] == self._empty:
+                return self._height - 1 - i
+
+        return -1
 
     def make_move(self, move):
-        x, y = move
-        self.check_posible_move(x, y)
+        x = move[0]
+        self.check_posible_move(x)
+        y = self.get_drop_row(x)
 
         self._board[y][x] = self._turn
         self._turn = self.next_player()
@@ -90,13 +95,14 @@ class TicTacToe(Game):
 
     # Is the same function of make_move but returning a copy
     def move(self, move):
-        x, y = move
-        self.check_posible_move(x, y)
+        x = move[0]
+        self.check_posible_move(x)
+        y = self.get_drop_row(x)
 
         new_board = copy.deepcopy(self._board)
         new_board[y][x] = self._turn
 
-        return TicTacToe.game_with_board_and_turn(new_board, self.next_player())
+        return self.__class__.game_with_board_and_turn(self._height, self._width,new_board, self.next_player())
 
     def is_board_full(self):
         for r in self._board:
@@ -137,20 +143,22 @@ class TicTacToe(Game):
 
         # Check if some row is all equal
         for r in board:
-            res = res or self.all_equal_to(r, player_str)
+            for i in range((self._width-4) + 1):
+                res = res or self.all_equal_to(r[i:i+4], player_str)
 
         # Check if some column is all equal
         for c in board.T:
-            res = res or self.all_equal_to(c, player_str)
+            for i in range((self._height-4) + 1):
+                res = res or self.all_equal_to(c[i:i+4], player_str)
 
         # Check if some diagonal is all equal
-        res = res or self.all_equal_to(board.diagonal(), player_str) or \
-                     self.all_equal_to(np.fliplr(board).diagonal(), player_str)
-
-        ### We need o check if the board is full
+        for i in range((self._height-4) + 1):
+            for j in range((self._width-4) + 1):
+                #print(board[i:].diagonal(j)[:4], i, j)
+                res = res or self.all_equal_to(board[i:].diagonal(j)[:4], player_str) or \
+                            self.all_equal_to(np.fliplr(board[i:]).diagonal(j)[:4], player_str)
 
         return res
-
 
     def all_equal_to(self, arr, val):
         for elem in arr:
@@ -159,17 +167,17 @@ class TicTacToe(Game):
         return True
 
     def all_posibles_moves(self):
+
         res = set()
         if not self._is_finish:
-            for i in range(3):
-                for j in range(3):
-                    if self._board[i][j] == '':
-                        res.add((j, i))
+            for c in range(self._width):
+                if self._board[0][c] == self._empty:
+                    res.add((c, ))
 
         return res
 
     def new_game(self):
-        return self.__class__()
+        return self.__class__(self._height, self._width)
 
     def get_state(self):
         return tuple([elem for row in self._board for elem in row])

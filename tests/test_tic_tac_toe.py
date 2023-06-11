@@ -17,10 +17,6 @@ class GeneralTests(Tests):
         ttt = TicTacToe()
         self.assert_true(ttt.turn == 'O', f"Error, is not the turn of O", "Succeful Test 3")
 
-    def test_new_game_strat_with_O(self):
-        ttt = TicTacToe()
-        self.assert_true(ttt.turn == 'O', f"Error, is not the turn of O", "Succeful Test 3")
-
     def test_all_equal_true(self):
         ttt = TicTacToe()
         arr = np.array(['O', 'O', 'O'])
